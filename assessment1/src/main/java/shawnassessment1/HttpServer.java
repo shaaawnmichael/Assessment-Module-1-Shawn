@@ -1,78 +1,63 @@
 package shawnassessment1;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 public class HttpServer {
+    private ServerSocket server;
+    private final int portNumber;
+    private final int threadPoolCount;
+    private ArrayList<String> docRootList;
 
-    Socket socket;
-    ServerSocket serverSocket;
-        
-        public static void main(String[] args) throws IOException {
-            
-            System.out.println("Please key in --port <port number> or --docRoot <colon delimiited list of directories>. If port is not specified default port will be 3000.");
-            Scanner scan =new Scanner(System.in);
-            String com = scan.next();
+    // Overloaded constructor when both arguments are supplied
+    public HttpServer(int portNumber, ArrayList<String> docRootList, int threadPoolCount) throws IOException {
+        this.portNumber = portNumber;
+        this.docRootList = docRootList;
+        this.threadPoolCount = threadPoolCount;
+        this.start_server();
+    }
 
-            while(true) {
+    private void start_server() throws IOException {
+        int i = 1;
+        // Validate docRootList argument
+//        if (!validate_doc_root(this.docRootList)){
+//            System.exit(1);
+//        }
 
-            if (com.equals("--port".substring(6)));
-                System.out.println("Listening on port" + com.substring(6));
+        // Start the server
+        ExecutorService threadPool = Executors.newFixedThreadPool(threadPoolCount);
+        server= new ServerSocket(portNumber);
 
-            break;
+        // Listen for requests
+        System.out.println("Listening on port " + Integer.toString(portNumber));
+        while (true) {
+            Socket socket= server.accept();
+            HttpClientConnection httpWorker= new HttpClientConnection(socket, i);
+            threadPool.submit(httpWorker);
+            i++;
+        }
+    }
 
+    private static boolean validate_doc_root(ArrayList<String> arg_docRootList) {
+        Path tmpPath;
+
+        // Check every path supplied and return false if any of them does not exist
+        for (String rootPath: arg_docRootList) {
+            tmpPath = Paths.get(rootPath);
+            if (Files.notExists(tmpPath)) {
+                System.out.println("ERROR: Directory at " + rootPath + " does not exist");
+                return false;
             }
-            
-
-        }    
+        }
+        // Return true if all paths are valid
+        return true;
+    }
 }
-
-
-/* String opop=new String();
-ServerSocket serv=new ServerSocket(12345);
-System.out.println("listening at port " +serv.getLocalPort());
-Socket sock=serv.accept();
-
-try{
-InputStream inps=sock.getInputStream();
-OutputStream osos=sock.getOutputStream();
-BufferedInputStream binps= new BufferedInputStream(inps);
-DataInputStream dinps= new DataInputStream(binps);
-BufferedOutputStream bos=new BufferedOutputStream(osos);
-DataOutputStream dos=new DataOutputStream(bos);
-
-String inputFromClient="Connected to Client";
-
-System.out.println(inputFromClient);
-Cookie newCookie= new Cookie();
-
-while (!inputFromClient.equals("exit"))
-{
-inputFromClient=dinps.readUTF();
-if (inputFromClient.equals("get-cookie"))
-{
-System.out.println(inputFromClient);
-opop=newCookie.returnCookie();
-System.out.println(opop); 
-dos.writeUTF(opop);
-
-}
-else if (inputFromClient.equals("exit"))
-System.out.println("Disconnected");
-
-else
-{System.out.println("wrong: "+inputFromClient);
-dos.writeUTF("Wrong input");  
-
-}
-dos.flush();
-}
-sock.close();
-serv.close();
-}
-catch(Exception e)
-{
-e.printStackTrace();
-} */

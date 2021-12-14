@@ -2,17 +2,24 @@ h1 {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    width: 50vw;
+    width: 20vw;
   }
   p {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    width: 50vw;
+    width: 20vw;
   }
   img {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 50vw; 
+    width: 40vw; 
+    }
+
+  .center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
     }
