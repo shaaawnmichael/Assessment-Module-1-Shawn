@@ -64,9 +64,6 @@ public class Main {
         // Create a new HTTP server
         HttpServer server = new HttpServer(portArg,docRootList,poolCountArg);
 
-//        // DEBUG Loop HASHMAP
-//        for (Map.Entry me : commandLineArgs.entrySet()) {
-//            System.out.println("Key: "+me.getKey() + " & Value: " + me.getValue());
-//        }
+
     }
 }
