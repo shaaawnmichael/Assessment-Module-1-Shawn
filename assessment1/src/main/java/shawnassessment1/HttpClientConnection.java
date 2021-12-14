@@ -3,10 +3,7 @@ package shawnassessment1;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.zip.GZIPInputStream;
 
 public class HttpClientConnection implements Runnable {
     private final Socket socket;
@@ -39,26 +36,32 @@ public class HttpClientConnection implements Runnable {
             try {
                 String httpBody = retrieve_resources(resourcePath);
             } catch (IOException e) {
-                e.printStackTrace();
+                try {
+                    send_response(resourcePath + " not found\r\n", "404 Not Found");
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }
 
     public String retrieve_resources(String resourcePath) throws IOException{
-        System.out.println("Retrieving resource at path: " + resourcePath + " for connection id " + id);
+        String fileLine;
 
         if (resourcePath.equalsIgnoreCase("/")) {
-            resourcePath = "/index.html";
+            resourcePath = "static\\index.html";
+        } else {
+            resourcePath = "static" + resourcePath;
         }
 
-        Path p = Paths.get(resourcePath);
-        InputStream is= new FileInputStream(p.toFile());
-        GZIPInputStream gis= new GZIPInputStream(is);
-        InputStreamReader isr= new InputStreamReader(gis);
-        LineNumberReader lnr= new LineNumberReader(isr);
-        String line;
-        while (null != (line = lnr.readLine()))
-            System.out.printf("%d: %s\n", lnr.getLineNumber(), line);
+        System.out.println("Retrieving resource at path: " + resourcePath + " for connection id " + id);
+
+        try(InputStream in = getClass().getResourceAsStream(resourcePath);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            System.out.println("Breakpoint");
+            fileLine = reader.readLine();
+            System.out.println(fileLine);
+        }
 
         return "";
     }
@@ -90,4 +93,5 @@ public class HttpClientConnection implements Runnable {
         os.flush();
     }
 
+    
 }

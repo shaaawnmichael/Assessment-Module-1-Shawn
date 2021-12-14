@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 public class HttpServer {
     private ServerSocket server;
     private final int portNumber;
@@ -38,7 +37,7 @@ public class HttpServer {
 
         // Listen for requests
         System.out.println("Listening on port " + Integer.toString(portNumber));
-        while (true) {
+        while(true) {
             Socket socket= server.accept();
             HttpClientConnection httpWorker= new HttpClientConnection(socket, i);
             threadPool.submit(httpWorker);
@@ -59,5 +58,6 @@ public class HttpServer {
         }
         // Return true if all paths are valid
         return true;
+        
     }
 }
