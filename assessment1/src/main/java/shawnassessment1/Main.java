@@ -19,9 +19,9 @@ public class Main {
         boolean argFlag = true;
 
         // Validate the command line arguments to check if they are passed correctly
-        for (String argString: args) {
+        for (String argString : args) {
             if (argFlag) {
-                if(argString.startsWith("--")) {
+                if (argString.startsWith("--")) {
                     argumentName = argString.substring(2);
                 } else {
                     System.out.println("ERROR: Argument name must start with -- @ " + argString);
@@ -42,19 +42,21 @@ public class Main {
         }
 
         // Get required values, else set default value
-        if (!commandLineArgs.containsKey("port")){
+        if (!commandLineArgs.containsKey("port")) {
             portArg = 3000;
         } else {
             portArg = Integer.parseInt(commandLineArgs.get("port"));
         }
 
-        if (!commandLineArgs.containsKey("docRoot")){
-            docRootList = new ArrayList<String>() {{add("./static");}};
+        if (!commandLineArgs.containsKey("docRoot")) {
+            docRootList = new ArrayList<String>() {{
+                add("./static");
+            }};
         } else {
             docRootList = new ArrayList<>(Arrays.asList(commandLineArgs.get("docRoot").split(":")));
         }
 
-        if (!commandLineArgs.containsKey("poolCount")){
+        if (!commandLineArgs.containsKey("poolCount")) {
             poolCountArg = 3;
         } else {
             poolCountArg = Integer.parseInt(commandLineArgs.get("poolCount"));
@@ -62,8 +64,6 @@ public class Main {
 
 
         // Create a new HTTP server
-        HttpServer server = new HttpServer(portArg,docRootList,poolCountArg);
-
-
+        HttpServer server = new HttpServer(portArg, docRootList, poolCountArg);
     }
 }
